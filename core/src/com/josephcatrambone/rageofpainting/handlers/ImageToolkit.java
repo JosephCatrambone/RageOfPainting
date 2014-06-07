@@ -1,9 +1,11 @@
 package com.josephcatrambone.rageofpainting.handlers;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Stack;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -73,6 +75,13 @@ public class ImageToolkit {
 		return palette;
 	}
 	
+	/*** reduceColors
+	 * Restricts the input image to the given palette, substituting nearest color.
+	 * Safe to pass the same image to input and output.
+	 * @param img
+	 * @param palette
+	 * @param out
+	 */
 	public static void reduceColors(Pixmap img, int[] palette, Pixmap out) {
 		for(int y=0; y < img.getHeight(); y++) {
 			for(int x=0; x < img.getWidth(); x++) {
@@ -119,6 +128,19 @@ public class ImageToolkit {
 		}
 	}
 	
+	public static int getNearestPaletteIndex(int[] palette, int color) {
+		int nearestIndex = 0;
+		int nearestDist = 0x0FFFFFFF;
+		for(int i=0; i < palette.length; i++) {
+			int dist = getColorDistanceSquared(palette[i], color);
+			if(dist < nearestDist) {
+				nearestDist = dist;
+				nearestIndex = i;
+			}
+		}
+		return nearestIndex;
+	}
+	
 	public static int makeColor(int r, int g, int b) {
 		return ((0xFF&r) << 24) | ((0xFF&g) << 16) | ((0xFF&b) << 8) | 0x000000FF;
 	}
@@ -127,7 +149,126 @@ public class ImageToolkit {
 		return (int)b & 0xFF;
 	}
 	
-	public static int[][] approximateImage(Pixmap img, int[] palette, int numChildren, int numRectangles, int numGenerations) {
+	/*** approximateImage
+	 * Calculate a mass of pixels to be painted to the screen.
+	 * Returns an array of steps.  [[index, x, y, x, y, x, y, ...], [index, x, y, x, y, x, y], ...]
+	 * @param img
+	 * @param palette
+	 * @return
+	 */
+	public static int[][] approximateImage(Pixmap img, int[] palette) {
+		ArrayList<int[]> steps = new ArrayList<int[]>();
+		int fillColor = makeColor(255, 0, 255);
+		
+		// First, detect blobs of pixels using bucket fill.
+		Pixmap temp = new Pixmap(img.getWidth(), img.getHeight(), Format.RGBA8888);
+		temp.drawPixmap(img, 0, 0);
+		for(int y=0; y < temp.getHeight(); y++) {
+			for(int x=0; x < temp.getWidth(); x++) {
+				int currentPixel = temp.getPixel(x, y);
+				if(currentPixel != fillColor) {
+					System.out.println("Pixel " + x + ", " + y + " is unvisited.");
+					
+					// Clear all the regions with this pixel and get the pixels used to paint it.
+					int[][] pixels = floodFillSelect(temp, x, y, fillColor);
+					int[] step = new int[pixels.length*2 + 1]; // Space for color index, 2*(xy).
+					// Convert the selected pixels into a painting step
+					step[0] = getNearestPaletteIndex(palette, currentPixel);
+					for(int i=0; i < pixels.length; i++) {
+						step[1+(2*i)+0] = pixels[i][0];
+						step[1+(2*i)+1] = pixels[i][1];
+					}
+					// Append that to our steps.
+					steps.add(step);
+				}
+			}
+		}
+		
+		// Sort the steps so we add big blogs before fine details.
+		// If we have two blobs of the same size, draw the like palette together.
+		int[][] finalSteps = steps.toArray(new int[][]{});
+		Arrays.sort(finalSteps, new Comparator<int[]>() {
+		    public int compare(int[] a, int[] b) {
+		    	if(b.length == a.length){ 
+		    		return (int)Math.signum(a[0] - b[0]);
+		    	} else {
+		    		return (int)Math.signum(b.length - a.length);
+		    	}
+		    } 
+		});
+		return finalSteps;
+	}
+	
+	/*** floodFillSelect
+	 * Flood-fills the img with the desired color, returning an array of the pixels filled.
+	 * @param img
+	 * @param x
+	 * @param y
+	 * @param matchColor
+	 * @param targetColor
+	 * @return
+	 */
+	public static int[][] floodFillSelect(Pixmap img, int startX, int startY, int targetColor) {
+		return floodFillSelect(img, startX, startY, targetColor, 3);
+	}
+	
+	public static int[][] floodFillSelect(Pixmap img, int startX, int startY, int targetColor, int connectivity) {
+		// TODO: Scanline fill.
+		boolean[] visited = new boolean[img.getWidth()*img.getHeight()];
+		Stack <int[]> candidates = new Stack<int[]>(); // Holds the candidate point.
+		ArrayList <int[]> selection = new ArrayList<int[]>(); // Holds the final points.
+		int matchColor = img.getPixel(startX, startY);
+		
+		// Set the draw colors
+		img.setColor(targetColor);
+		
+		candidates.add(new int[] {startX, startY});
+		while(!candidates.isEmpty()) {
+			int[] current = candidates.pop();
+			int x = current[0];
+			int y = current[1];
+			System.out.println("DEBUG: Visiting " + x + "," + y);
+			if(img.getPixel(x, y) == matchColor && !visited[x+y*img.getWidth()]) { // If the colors match
+				// Mark this pixel and add it to the selection.
+				selection.add(new int[] {x, y});
+				img.drawPixel(x, y);
+				visited[x+y*img.getWidth()] = true;
+				
+				// Add adjacent pixels.
+				if(connectivity >= 0) { // Basic 4-connctivity
+					if(isInsideImage(img, x-1, y)) { candidates.add(new int[] {x-1, y}); }
+					if(isInsideImage(img, x+1, y)) { candidates.add(new int[] {x+1, y}); }
+					if(isInsideImage(img, x, y-1)) { candidates.add(new int[] {x, y-1}); }
+					if(isInsideImage(img, x, y+1)) { candidates.add(new int[] {x, y+1}); }
+				} else if(connectivity >= 1) { // 8-connectivity
+					if(isInsideImage(img, x-1, y)) { candidates.add(new int[] {x-1, y}); }
+					if(isInsideImage(img, x+1, y)) { candidates.add(new int[] {x+1, y}); }
+					if(isInsideImage(img, x, y-1)) { candidates.add(new int[] {x, y-1}); }
+					if(isInsideImage(img, x, y+1)) { candidates.add(new int[] {x, y+1}); }
+					
+					if(isInsideImage(img, x-1, y-1)) { candidates.add(new int[] {x-1, y-1}); }
+					if(isInsideImage(img, x+1, y-1)) { candidates.add(new int[] {x+1, y-1}); }
+					if(isInsideImage(img, x-1, y+1)) { candidates.add(new int[] {x-1, y+1}); }
+					if(isInsideImage(img, x+1, y+1)) { candidates.add(new int[] {x+1, y+1}); }
+				} else if(connectivity >= 2) { // Jump-connectivity
+					for(int i=-2; i < 3; i++) { // Top
+						for(int j=-2; j < 3; j++) {
+							if(i == 0 && j == 0) { continue; }
+							if(isInsideImage(img, x+i, y+j)) { candidates.add(new int[] {x+i, y+j}); }
+						}
+					}
+				}
+			}
+		}
+		
+		return selection.toArray(new int[][]{});
+	}
+	
+	public static boolean isInsideImage(Pixmap img, int x, int y) {
+		return x >= 0 && y >= 0 && x < img.getWidth() && y < img.getHeight();
+	}
+	
+	public static int[][] approximateImageWithRectangles(Pixmap img, int[] palette, int numChildren, int numRectangles, int numGenerations) {
 		final int ODDS_OF_MUTATION = 2; // One in this many will mutate.
 		final int GENETIC_INSTABILITY = 200; // Range in which rectangles will move
 		final int PALETTE_SWITCH_LIMIT = 180; // If random number between zero and GENETIC INSTABILITY greater than this, palette change
@@ -225,7 +366,6 @@ public class ImageToolkit {
 		return children[0];
 	}
 	
-	
 	/*** drawRectanglesToImage
 	 * Draw the array of rectangles to the image up to (but not including) the step limit.
 	 * If step limit is -1, will draw all rectangles.
@@ -244,6 +384,22 @@ public class ImageToolkit {
 		for(int i=0; i < stepLimit; i++) {
 			img.setColor(palette[rectangles[i][C]]);
 			img.fillRectangle(rectangles[i][X], rectangles[i][Y], rectangles[i][W], rectangles[i][H]);
+		}
+	}
+	
+	public static void drawPixelsToImage(Pixmap img, int[][] steps, int[] palette, int stepLimit) {
+		if(stepLimit == -1) { stepLimit = steps.length; }
+		stepLimit = Math.min(stepLimit, steps.length); // We don't want to try and draw more rectangles than there are.
+		
+		// Clear canvas
+		img.setColor(Color.WHITE);
+		img.fillRectangle(0, 0, img.getWidth(), img.getHeight());
+		
+		for(int i=0; i < stepLimit; i++) {
+			img.setColor(palette[steps[i][0]]);
+			for(int j=0; j < (int)Math.ceil((steps[i].length-1)/2.0f); j++) {
+				img.drawPixel(steps[i][1+j*2], steps[i][1+j*2+1]);
+			}
 		}
 	}
 	
