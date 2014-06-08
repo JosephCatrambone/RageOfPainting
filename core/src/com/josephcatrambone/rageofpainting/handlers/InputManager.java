@@ -30,13 +30,13 @@ public class InputManager extends InputAdapter {
 	}
 	*/
 	
-	//static {
-	public InputManager() {
+	static {
 		previousKeyboardState = new boolean[NUM_KEYS];
 		currentKeyboardState = new boolean[NUM_KEYS];
 		keymap = new HashMap<String, Integer>();
 		previousMouseState = new boolean[NUM_BUTTONS]; // Also applies for pointers 1, 2, and 3
 		currentMouseState = new boolean[NUM_BUTTONS]; // Also applies for pointers 1, 2, and 3
+		lastMouse = new Vector2(0, 0);
 	}
 	
 	public static void bindKey(String name, int key) {
@@ -190,6 +190,10 @@ public class InputManager extends InputAdapter {
 	
 	public static boolean isMousePressed(int button) {
 		return !previousMouseState[button] && currentMouseState[button];
+	}
+	
+	public static boolean isMouseDown(int button) {
+		return currentMouseState[button];
 	}
 	
 }
