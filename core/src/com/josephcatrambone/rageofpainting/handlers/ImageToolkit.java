@@ -209,7 +209,7 @@ public class ImageToolkit {
 	 * @return
 	 */
 	public static int[][] floodFillSelect(Pixmap img, int startX, int startY, int targetColor) {
-		return floodFillSelect(img, startX, startY, targetColor, 3);
+		return floodFillSelect(img, startX, startY, targetColor, 24);
 	}
 	
 	public static int[][] floodFillSelect(Pixmap img, int startX, int startY, int targetColor, int connectivity) {
