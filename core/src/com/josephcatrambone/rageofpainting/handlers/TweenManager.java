@@ -18,6 +18,18 @@ public class TweenManager {
 	 * @param time
 	 */
 	public static void addTween(Object object, String attribute, float from, float to, float time) {
+		addTween(object, attribute, from, to, time, null);
+	}
+	
+	public static void addTween(Object object, String attribute, float from, float to, float time, Tween next) {
+		activeTweens.add(makeTween(object, attribute, from, to, time, null));
+	}
+	
+	public static void addTween(Tween t) {
+		activeTweens.add(t);
+	}
+	
+	public static Tween makeTween(Object object, String attribute, float from, float to, float time, Tween next) {
 		Class <?> c = object.getClass();
 		Tween t = new Tween();
 		
@@ -26,7 +38,7 @@ public class TweenManager {
 			t.f = c.getField(attribute);
 		} catch(NoSuchFieldException nsfe) {
 			System.err.println("ERROR: Tried to make tween on " + c.getName() + " class field " + attribute + ".  Tween not created.");
-			return;
+			return null;
 		}
 		
 		t.from = from;
@@ -35,7 +47,7 @@ public class TweenManager {
 		t.accumulatedTime = 0f;
 		t.completed = false;
 		
-		activeTweens.add(t);
+		return t;
 	}
 	
 	public static void update(float dt) {
@@ -45,11 +57,14 @@ public class TweenManager {
 		for(Tween t : activeTweens) {
 			if(t.completed) { continue; }
 			
-			// Add the time delta to the tweens.
+			// Add the time delta to the tweens and determine if it's done.
 			t.accumulatedTime += dt;
 			if(t.accumulatedTime > t.time) {
 				t.completed = true;
 				expiredTweens.push(t);
+				if(t.next != null) { // Also, if this is done and there's one coming after it, add that, too.
+					activeTweens.push(t.next);
+				}
 			} else {
 				// If the tween isn't expired, go ahead and calculate the update value.
 				float timeFraction = t.accumulatedTime/t.time;
@@ -84,6 +99,7 @@ class Tween {
 	float to; // The end-value at time TIME.
 	float time; // How long it should take to perform.
 	float accumulatedTime;
-	int behavior;
+	int behavior; // Bounce, stop, restart?  Not yet used.
 	boolean completed;
+	Tween next; // After this tween is complete, this next one will pop in.
 }
