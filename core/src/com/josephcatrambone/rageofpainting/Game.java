@@ -9,9 +9,11 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.josephcatrambone.rageofpainting.handlers.GameStateManager;
 import com.josephcatrambone.rageofpainting.handlers.ImageToolkit;
 import com.josephcatrambone.rageofpainting.handlers.InputManager;
+import com.josephcatrambone.rageofpainting.handlers.TweenManager;
 import com.josephcatrambone.rageofpainting.states.PlayState;
 
 public class Game extends ApplicationAdapter {
@@ -23,11 +25,15 @@ public class Game extends ApplicationAdapter {
 	public static AssetManager assetManager;
 	public static InputManager inputManager;
 	
+	private int frameCount;
+	private float timeAccumulator;
+	
 	@Override
 	public void create () {
 		Game.assetManager = new AssetManager();
 		Game.stateManager = new GameStateManager(this);
 		//Game.inputManager = new InputManager();
+		//Game.tweenManager = new TweenManager();
 		
 		PlayState ps = new PlayState(Game.stateManager);
 		stateManager.pushState(ps);
@@ -37,13 +43,25 @@ public class Game extends ApplicationAdapter {
 	public void render () {
 		float dt = Gdx.graphics.getDeltaTime();
 		InputManager.update();
+		TweenManager.update(dt);
 		stateManager.update(dt);
 		stateManager.render(dt);
+		calculateFPS(dt);
 	}
 	
 	@Override
 	public void dispose() {
 		stateManager.dispose();
 		assetManager.dispose();
+	}
+	
+	private void calculateFPS(float dt) {
+		timeAccumulator += dt;
+		frameCount += 1;
+		if(timeAccumulator > 1) {
+			System.out.println(frameCount + " FPS");
+			timeAccumulator = 0;
+			frameCount = 0;
+		}
 	}
 }
