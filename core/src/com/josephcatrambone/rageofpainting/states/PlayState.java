@@ -8,27 +8,26 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.josephcatrambone.rageofpainting.entities.Button;
+import com.josephcatrambone.rageofpainting.entities.Canvas;
 import com.josephcatrambone.rageofpainting.handlers.GameStateManager;
 import com.josephcatrambone.rageofpainting.handlers.ImageToolkit;
 import com.josephcatrambone.rageofpainting.handlers.InputManager;
+import com.josephcatrambone.rageofpainting.handlers.TweenManager;
 
 public class PlayState extends GameState {
 	
-	SpriteBatch batch;
+	private SpriteBatch batch;
 	
-	Texture goalImage;
-	Texture teacherImage;
-	Texture userImage;
+	private Texture goalImage;
+	private Texture teacherImage;
 	
-	Button playButton;
+	private int[] pal;
+	private int[][] steps;
+	private int step = 0;
+	private boolean play = false;
 	
-	int[] pal;
-	int[][] steps;
-	int step = 0;
-	boolean play = false;
-	
-	Pixmap teacherCanvas;
-	Pixmap userCanvas;
+	private Pixmap teacherCanvas;
+	private Canvas userCanvas;
 	
 	public PlayState(GameStateManager gsm) {
 		super(gsm);
@@ -38,7 +37,8 @@ public class PlayState extends GameState {
 		System.out.println("Opening image.");
 		Pixmap img = new Pixmap(Gdx.files.internal("shalinor.gif"));
 		teacherCanvas = new Pixmap(img.getWidth(), img.getHeight(), Format.RGBA8888);
-		userCanvas = new Pixmap(img.getWidth(), img.getHeight(), Format.RGBA8888);
+		userCanvas = new Canvas(Gdx.graphics.getWidth()/2, 0, img.getWidth(), img.getHeight());
+		userCanvas.brushSize = 3;
 		
 		System.out.println("Selecting palette.");
 		pal = ImageToolkit.getPalette(img, 6, 50);
@@ -52,13 +52,9 @@ public class PlayState extends GameState {
 		System.out.println("Pushing texture from CPU mem to GPU mem.");
 		goalImage = new Texture(img);
 		img.dispose();
-		
-		playButton = new Button(goalImage, 0, 0, new Runnable() {
-			public void run() {
-				System.out.println("Button pressed.");
-				play = !play;
-			}
-		});
+
+		//playButton = new Button(goalImage, 0, 0, new Runnable() { public void run() {}; });
+		//TweenManager.addTween(playButton.position, "x", -1, 1, 10, TweenManager.makeTween(playButton.position, "x", 1, -1, 10, null));
 	}
 
 	@Override
@@ -69,7 +65,15 @@ public class PlayState extends GameState {
 			step = (step+1) % steps.length;
 		}
 		
-		playButton.update(dt);
+		if(Gdx.input.isKeyPressed(Keys.NUM_1)) {
+			userCanvas.brushColor = pal[0];
+		}
+		
+		if(Gdx.input.isKeyPressed(Keys.NUM_2)) {
+			userCanvas.brushColor = pal[1];
+		}
+		
+		userCanvas.update(dt);
 	}
 
 	@Override
@@ -82,7 +86,7 @@ public class PlayState extends GameState {
 		batch.begin();
 		batch.draw(goalImage, 0f, 0f);
 		batch.draw(t2, goalImage.getWidth(), 0);
-		playButton.render(batch);
+		userCanvas.render(batch);
 		batch.end();
 		
 		t2.dispose();
