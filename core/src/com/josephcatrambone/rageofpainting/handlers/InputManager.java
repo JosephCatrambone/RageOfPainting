@@ -11,6 +11,7 @@ import com.josephcatrambone.rageofpainting.Game;
 public class InputManager extends InputAdapter {
 	public static final int NUM_KEYS = 256;
 	public static final int NUM_BUTTONS = 3;
+	public static final boolean y_up = true;
 	// We have two ways of handling input: Low-level names and high-level names. 
 	// Low-level means directly accessing the KeyCodes.  High level means binding inputs to full names like 'Jump'.
 	private static HashMap <String, Integer> keymap; // The 'jump' to 'space' mapping.
@@ -170,7 +171,11 @@ public class InputManager extends InputAdapter {
 		if("HORIZONTAL".equals(axis)) {
 			return 2.0f*((float)Gdx.input.getX()/(Game.VIRTUAL_WIDTH)) - 1.0f;
 		} else if("VERTICAL".equals(axis)) {
-			return -2.0f*((float)Gdx.input.getY()/(Game.VIRTUAL_HEIGHT)) + 1.0f;
+			if(y_up) {
+				return -2.0f*((float)Gdx.input.getY()/(Game.VIRTUAL_HEIGHT)) + 1.0f;
+			} else {
+				return 2.0f*((float)Gdx.input.getY()/(Game.VIRTUAL_HEIGHT)) - 1.0f;
+			}
 		} else {
 			System.err.println("Unrecognized axis passed into getAxis function: " + axis);
 			return 0;
@@ -181,7 +186,11 @@ public class InputManager extends InputAdapter {
 		if("HORIZONTAL".equals(axis)) {
 			return (float)Gdx.input.getX();
 		} else if("VERTICAL".equals(axis)) {
-			return Game.VIRTUAL_HEIGHT-(float)Gdx.input.getY();
+			if(y_up) {
+				return Game.VIRTUAL_HEIGHT-(float)Gdx.input.getY();
+			} else {
+				return (float)Gdx.input.getY();
+			}
 		} else {
 			System.err.println("Unrecognized axis passed into getAxis function: " + axis);
 			return 0;
