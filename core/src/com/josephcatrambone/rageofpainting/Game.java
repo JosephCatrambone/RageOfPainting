@@ -18,8 +18,9 @@ import com.josephcatrambone.rageofpainting.states.PlayState;
 
 public class Game extends ApplicationAdapter {
 	
-	public static int VIRTUAL_WIDTH = 640;
-	public static int VIRTUAL_HEIGHT = 480;
+	public static int VIRTUAL_WIDTH = 480;
+	public static int VIRTUAL_HEIGHT = 320;
+	public static int SCREEN_SCALE = 2;
 	
 	public static GameStateManager stateManager;
 	public static AssetManager assetManager;

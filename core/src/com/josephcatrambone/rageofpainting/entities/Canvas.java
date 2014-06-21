@@ -58,6 +58,7 @@ public class Canvas implements Updateable, Renderable{
 	}
 	
 	private boolean isInside(float x, float y) {
+		System.out.println(x + ", " + y + " vs " + this.position.x + ", " + this.position.y + ", " + this.size.x + ", " + this.size.y);
 		return (x > position.x && y > position.y && x < position.x + size.x && y < position.y + size.y);
 	}
 	

@@ -169,12 +169,12 @@ public class InputManager extends InputAdapter {
 	// TODO: Replace with camera unproject?
 	public static float getAxis(String axis) {
 		if("HORIZONTAL".equals(axis)) {
-			return 2.0f*((float)Gdx.input.getX()/(Game.VIRTUAL_WIDTH)) - 1.0f;
+			return 2.0f*((float)Gdx.input.getX()/(Gdx.graphics.getWidth())) - 1.0f;
 		} else if("VERTICAL".equals(axis)) {
 			if(y_up) {
-				return -2.0f*((float)Gdx.input.getY()/(Game.VIRTUAL_HEIGHT)) + 1.0f;
+				return -2.0f*((float)Gdx.input.getY()/(Gdx.graphics.getHeight())) + 1.0f;
 			} else {
-				return 2.0f*((float)Gdx.input.getY()/(Game.VIRTUAL_HEIGHT)) - 1.0f;
+				return 2.0f*((float)Gdx.input.getY()/(Gdx.graphics.getHeight())) - 1.0f;
 			}
 		} else {
 			System.err.println("Unrecognized axis passed into getAxis function: " + axis);
@@ -183,14 +183,11 @@ public class InputManager extends InputAdapter {
 	}
 	
 	public static float getPosition(String axis) {
+		float a = getAxis(axis);
 		if("HORIZONTAL".equals(axis)) {
-			return (float)Gdx.input.getX();
+			return (1.0f + a)/2.0f * (float)Game.VIRTUAL_WIDTH;
 		} else if("VERTICAL".equals(axis)) {
-			if(y_up) {
-				return Game.VIRTUAL_HEIGHT-(float)Gdx.input.getY();
-			} else {
-				return (float)Gdx.input.getY();
-			}
+			return (1.0f + a)/2.0f * (float)Game.VIRTUAL_HEIGHT;
 		} else {
 			System.err.println("Unrecognized axis passed into getAxis function: " + axis);
 			return 0;
