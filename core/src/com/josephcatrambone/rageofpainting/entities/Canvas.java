@@ -9,9 +9,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.josephcatrambone.rageofpainting.handlers.InputManager;
 
 public class Canvas implements Updateable, Renderable{
-
+	public int INTERPOLATION_LEVEL = 1;
+	
 	private Vector2 position;
 	private Vector2 size;
+	private Vector2 lastBrushMark = null; // We use this to help interpolate on fast strokes.
 	private Texture texture;
 	private Pixmap canvas;
 	public int brushColor;
@@ -45,15 +47,26 @@ public class Canvas implements Updateable, Renderable{
 	@Override
 	public void update(float deltaTime) {
 		if(InputManager.isMouseDown(0)) {
-			float x = InputManager.getPosition("HORIZONTAL");
-			float y = InputManager.getPosition("VERTICAL");
-			if(isInside(x, y)) {
-				canvas.setColor(brushColor);
-				// The canvas is actually 'upside down'.  <0,0> is the top left and y grows down.
-				int xPrime = (int)x-(brushSize/2)-(int)position.x;
-				int yPrime = canvas.getHeight()-((int)y-(brushSize/2)-(int)position.y);				
-				canvas.fillRectangle(xPrime, yPrime, brushSize, brushSize);
+			// We're going to draw several marks between the start brush stroke and the dest.
+			// OpenGL (or really the PixMap has no way to change line thicknes.
+			// So we're just going to add a bunch of dots.
+			Vector2 toMark = new Vector2(InputManager.getPosition("HORIZONTAL"), InputManager.getPosition("VERTICAL"));
+			if(lastBrushMark == null) { lastBrushMark = toMark; }
+			Vector2 fromMark = lastBrushMark;
+			for(int i=0; i < INTERPOLATION_LEVEL; i++) {
+				float x = (toMark.x - fromMark.x)*((float)i/(float)INTERPOLATION_LEVEL) + fromMark.x;
+				float y = (toMark.y - fromMark.y)*((float)i/(float)INTERPOLATION_LEVEL) + fromMark.y;
+				if(isInside(x, y)) { 
+					canvas.setColor(brushColor);
+					// The canvas is actually 'upside down'.  <0,0> is the top left and y grows down.
+					int xPrime = (int)x-(brushSize/2)-(int)position.x;
+					int yPrime = canvas.getHeight()-((int)y-(brushSize/2)-(int)position.y);				
+					canvas.fillRectangle(xPrime, yPrime, brushSize, brushSize);
+				}
 			}
+			lastBrushMark = toMark;
+		} else {
+			lastBrushMark = null;
 		}
 	}
 	
