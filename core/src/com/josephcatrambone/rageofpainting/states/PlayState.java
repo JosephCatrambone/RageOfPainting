@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.josephcatrambone.rageofpainting.Game;
 import com.josephcatrambone.rageofpainting.entities.Button;
@@ -18,6 +19,7 @@ import com.josephcatrambone.rageofpainting.handlers.TweenManager;
 
 public class PlayState extends GameState {
 	
+	private BitmapFont font;
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
 	
@@ -43,11 +45,14 @@ public class PlayState extends GameState {
 		
 		batch = new SpriteBatch();
 		
+		font = new BitmapFont();
+		
 		System.out.println("Opening image.");
 		Pixmap img = new Pixmap(Gdx.files.internal("shalinor.gif"));
 		teacherCanvas = new Pixmap(img.getWidth(), img.getHeight(), Format.RGBA8888);
 		userCanvas = new Canvas(Game.VIRTUAL_WIDTH/2, PALETTE_SELECTION_HEIGHT, img.getWidth(), img.getHeight());
 		userCanvas.brushSize = 3;
+		userCanvas.INTERPOLATION_LEVEL = 10;
 		
 		System.out.println("Selecting palette.");
 		pal = ImageToolkit.getPalette(img, 8, 100);

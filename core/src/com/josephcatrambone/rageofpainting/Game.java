@@ -15,6 +15,7 @@ import com.josephcatrambone.rageofpainting.handlers.ImageToolkit;
 import com.josephcatrambone.rageofpainting.handlers.InputManager;
 import com.josephcatrambone.rageofpainting.handlers.TweenManager;
 import com.josephcatrambone.rageofpainting.states.PlayState;
+import com.josephcatrambone.rageofpainting.states.SplashState;
 
 public class Game extends ApplicationAdapter {
 	
@@ -36,8 +37,9 @@ public class Game extends ApplicationAdapter {
 		//Game.inputManager = new InputManager();
 		//Game.tweenManager = new TweenManager();
 		
-		PlayState ps = new PlayState(Game.stateManager);
-		stateManager.pushState(ps);
+		//PlayState ps = new PlayState(Game.stateManager);
+		SplashState ss = new SplashState(Game.stateManager);
+		stateManager.pushState(ss);
 	}
 
 	@Override
