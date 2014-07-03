@@ -36,19 +36,17 @@ public class PlayState extends GameState {
 	private Canvas userCanvas;
 	private Button[] colorSelection;
 	
-	public PlayState(GameStateManager gsm) {
-		super(gsm);
-		camera = new OrthographicCamera(game.VIRTUAL_WIDTH, game.VIRTUAL_HEIGHT);
-		camera.setToOrtho(false, game.VIRTUAL_WIDTH, game.VIRTUAL_HEIGHT);
+	public PlayState() {
+		super();
 		
 		final int PALETTE_SELECTION_HEIGHT = 32;
 		
-		batch = new SpriteBatch();
-		
-		font = new BitmapFont();
+		camera = Game.mainCamera;
+		batch = Game.spriteBatch;
+		font = Game.font;
 		
 		System.out.println("Opening image.");
-		Pixmap img = new Pixmap(Gdx.files.internal("shalinor.gif"));
+		Pixmap img = new Pixmap(Gdx.files.internal("mountain_lake_small.jpg"));
 		teacherCanvas = new Pixmap(img.getWidth(), img.getHeight(), Format.RGBA8888);
 		userCanvas = new Canvas(Game.VIRTUAL_WIDTH/2, PALETTE_SELECTION_HEIGHT, img.getWidth(), img.getHeight());
 		userCanvas.brushSize = 3;
