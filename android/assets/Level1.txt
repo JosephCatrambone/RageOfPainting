@@ -1,0 +1,20 @@
+Introduction
+square.png
+2
+60
+0.5
+0.0
+robot.png
+Select the black color from your palette on the bottom right and duplicate my image.  This is the Completely Automated Process To Distinguish Humans from Zucchini, or CAPDHZ.
+0.1
+robot.png
+Begin drawing your rectangle by setting the luminosity of the 128x128 section at offset 32x32 to zero.
+0.3
+robot.png
+You can use the 'view' button to get a glimpse of the completed image.
+0.5
+robot_glee.png
+We're about half way done with our episode.  If you finish early, you can use the 'finish' button to skip ever closer to your doom.
+0.9
+robot_glee.png
+The episode is nearing completion.  Thank you for joining us this evening.  Please use your remaining heartbeats to mull over your failures.
