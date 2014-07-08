@@ -1,6 +1,7 @@
 package com.josephcatrambone.rageofpainting;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -51,7 +52,7 @@ public class Game extends ApplicationAdapter {
 		Game.font = new BitmapFont();
 
 		stateManager.pushState(new LoadingState()); // Open with a loading state.
-		asyncLoad(MainMenuState.class);
+		stateManager.setState(new MainMenuState());
 	}
 
 	@Override
@@ -78,26 +79,5 @@ public class Game extends ApplicationAdapter {
 			timeAccumulator = 0;
 			frameCount = 0;
 		}
-	}
-	
-	public static void asyncLoad(final Class nextState) {
-		final LoadingState ss = new LoadingState();
-		stateManager.pushState(ss);
-		
-		// Spawn a thread to load the next one.
-		(new Runnable() {
-			public void run() {
-				try {
-					ss.nextState = (GameState)nextState.newInstance();
-				} catch (InstantiationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				ss.doneLoading = true;
-			}
-		}).run();
 	}
 }

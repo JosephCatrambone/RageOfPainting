@@ -40,7 +40,8 @@ public class MainMenuState extends GameState {
 		levelButtons[0] = new Button(Game.assetManager.get(BUTTON_TEXTURE, Texture.class), 0f, 0f, "Episode 1", new Runnable() {
 			public void run() {
 				System.out.println("Loading Level 1");
-				Game.asyncLoad(PlayState.class);
+				Game.stateManager.pushState(new LoadingState());
+				Game.stateManager.setState(new PlayState("Level1.txt"));
 			}
 		});
 	}
@@ -63,6 +64,8 @@ public class MainMenuState extends GameState {
 		for(Button b : levelButtons) {
 			b.render(batch);
 		}
+		
+		font.draw(batch, "Level Select", 0, Game.VIRTUAL_HEIGHT-1*font.getLineHeight());
 		
 		batch.end();
 	}
