@@ -1,0 +1,9 @@
+EpisodeTemplate // Level Name
+ImageFilename.png // Image to be loaded
+number_of_colors // Number of colors on the palette
+time_limit // How long the user has to complete it
+0.7 // This is the similarity that the images must have for this level to be passed
+0.0 // This is the percent of the way done we are
+thestate_for_the_painter_to_have.png Or Blank for no change.
+This is a line which the robot will say. 
+0.5 // We're half way done

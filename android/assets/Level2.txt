@@ -1,0 +1,32 @@
+Happy Little Toot
+toot.png
+8
+300
+0.1
+0.0
+robot.png
+Welcome to the show.  Today we're drawing an emoticon from the popular website, "Something Awful."
+0.1
+robot.png
+You see, human languages suffer from ambiguity and uncertainty.  
+0.2
+robot.png
+Compounding things, humans themselves suffer from emotions.
+0.4
+robot.png
+As an artifact of their inherent imperfections, humans chose to express their emotions through emoticons, rather than directly serialize their state.
+0.5
+robot.png
+I'm quite glad I have no emotions.
+0.6
+robot.png
+
+0.8
+robot_glee.png
+I'm also glad I don't have organs.
+0.85
+robot.png
+
+0.9
+robot_glee.png
+The episode is nearing completion.  Thank you for joining us this evening.  Please use your remaining heartbeats to mull over your failures.
