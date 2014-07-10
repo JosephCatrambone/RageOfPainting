@@ -20,6 +20,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.josephcatrambone.rageofpainting.Game;
 import com.josephcatrambone.rageofpainting.entities.Button;
 import com.josephcatrambone.rageofpainting.entities.Canvas;
+import com.josephcatrambone.rageofpainting.entities.TextDisplay;
 import com.josephcatrambone.rageofpainting.handlers.GameStateManager;
 import com.josephcatrambone.rageofpainting.handlers.ImageToolkit;
 import com.josephcatrambone.rageofpainting.handlers.InputManager;
@@ -36,6 +37,7 @@ public class PlayState extends GameState {
 	private float passThreshold; // How close the images have to be for passing
 	private float episodeDuration; // How long this stage lasts
 	private float accumulatedTime; // How long we've been in this level
+	private int lastScriptMarker; // CALCULATED!  The last script marker we encountered.
 	private Float[] timeMarkers; // Values between 0 and 1 which indicate how far along we should be to trigger an episode event.
 	private String[] hostEmotions; // What look will our host take
 	private String[] hostComments; // What will our host say?
@@ -48,6 +50,7 @@ public class PlayState extends GameState {
 	private int[][] steps = null;
 	private int step = 0;
 	private boolean play = false;
+	private TextDisplay textOut = null;
 	
 	// User pieces
 	private Canvas userCanvas;
@@ -59,6 +62,14 @@ public class PlayState extends GameState {
 		batch = Game.spriteBatch;
 		font = Game.font;
 		loaded = false;
+		
+		// Make sure our camera is on point.
+		camera.setToOrtho(false, Game.VIRTUAL_WIDTH, Game.VIRTUAL_HEIGHT);
+		camera.update();
+		
+		// Create our text output.
+		textOut = new TextDisplay(0, 0, Game.VIRTUAL_WIDTH/2, Game.VIRTUAL_HEIGHT/6, font);
+		lastScriptMarker = 0;
 		
 		// Convert the script filename into the actual script.
 		BufferedReader fin;
@@ -73,6 +84,8 @@ public class PlayState extends GameState {
 			ioe.printStackTrace();
 			loaded = false;
 		}
+		
+		textOut.setText(hostComments[0]);
 	}
 
 	public void parseScript(InputStream fstream) throws IOException {
@@ -158,15 +171,17 @@ public class PlayState extends GameState {
 		accumulatedTime += dt;
 		float completionAmount = accumulatedTime/episodeDuration;
 		
-		System.out.print(accumulatedTime + ", " + episodeDuration + ", " + completionAmount);
+		textOut.update(dt);
 		
 		// Select the most recent trigger
-		int latestTrigger = 0;
-		for(int i=0; i < timeMarkers.length; i++) { if(completionAmount > timeMarkers[i]) { latestTrigger = i; } else { break; } }
-		
-		// Set the emotion
-		// Set the text
-		System.out.print(hostEmotions[latestTrigger] + ":" + hostComments[latestTrigger] + "\n");
+		if(lastScriptMarker+1 < timeMarkers.length && completionAmount > timeMarkers[lastScriptMarker+1]) {
+			lastScriptMarker++;
+			// Set the emotion
+			// Set the text
+			textOut.setText(hostComments[lastScriptMarker], 0.5f, 10f);
+			System.out.println("Set text " + hostComments[lastScriptMarker]);
+			//System.out.print(hostEmotions[latestTrigger] + ":" + hostComments[latestTrigger] + "\n");
+		}
 		
 		// Check completion
 		if(completionAmount >= 1.0) {
@@ -207,12 +222,21 @@ public class PlayState extends GameState {
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		//batch.draw(goalImage, 0f, 0f);
+		
+		// Render teacher images
+		//batch.draw(goalImage, 0f, 0f); // Draw goal image with mild transparency on teacher image.
 		if(teacherImage != null) { batch.draw(teacherImage, 0, 0); } //We only update the teacher image once in a while, so don't regernerate it every time.
+		
+		// Render UI
 		userCanvas.render(batch);
 		for(Button b : colorSelection) {
 			b.render(batch);
 		}
+		
+		// Render teacher text
+		textOut.render(batch);
+		
+		// Wrap up
 		batch.end();
 	}
 
