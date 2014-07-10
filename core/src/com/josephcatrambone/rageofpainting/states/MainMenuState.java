@@ -36,12 +36,21 @@ public class MainMenuState extends GameState {
 		Game.assetManager.finishLoading();
 		
 		final GameStateManager gsmRef = Game.stateManager; 
-		levelButtons = new Button[1];
-		levelButtons[0] = new Button(Game.assetManager.get(BUTTON_TEXTURE, Texture.class), 0f, 0f, "Episode 1", new Runnable() {
+		levelButtons = new Button[2];
+		
+		levelButtons[0] = new Button(Game.assetManager.get(BUTTON_TEXTURE, Texture.class), 0f, 100f, "Episode 1", new Runnable() {
 			public void run() {
 				System.out.println("Loading Level 1");
 				Game.stateManager.pushState(new LoadingState());
 				Game.stateManager.setState(new PlayState("Level1.txt"));
+			}
+		});
+		
+		levelButtons[1] = new Button(Game.assetManager.get(BUTTON_TEXTURE, Texture.class), 0f, 0f, "Episode 2", new Runnable() {
+			public void run() {
+				System.out.println("Loading Level 2");
+				Game.stateManager.pushState(new LoadingState());
+				Game.stateManager.setState(new PlayState("Level2.txt"));
 			}
 		});
 	}

@@ -403,6 +403,34 @@ public class ImageToolkit {
 		}
 	}
 	
+	/*** drawPixelsToImage
+	 * Similar to the integer version of drawPixels to image, but will only paint a percentage of the image at a time.
+	 * @param img
+	 * @param steps
+	 * @param palette
+	 * @param amount
+	 */
+	public static void drawPixelsToImage(Pixmap img, int[][] steps, int[] palette, float amount) {
+		int pixelsToPaint = (int)((img.getWidth()*img.getHeight()) * Math.min(1.0f, amount));
+		
+		// Clear canvas
+		img.setColor(Color.WHITE);
+		img.fillRectangle(0, 0, img.getWidth(), img.getHeight());
+		
+		int i=0, j=0;
+		img.setColor(palette[steps[i][0]]);
+		while(pixelsToPaint > 0) {
+			if(j >= steps[i].length-1) { 
+				j=0; 
+				i++;
+				img.setColor(palette[steps[i][0]]);
+			}
+			img.drawPixel(steps[i][1+j], steps[i][2+j]);
+			pixelsToPaint--;
+			j += 2;
+		}
+	}
+	
 	/*** getDistance
 	 * Returns the relative distance of the two pixmaps.  This sums the square of pixel distances.
 	 * NOTE: ASSUMES THE IMAGES ARE THE SAME SIZE.

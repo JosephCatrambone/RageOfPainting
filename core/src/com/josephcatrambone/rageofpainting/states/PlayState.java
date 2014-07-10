@@ -117,6 +117,7 @@ public class PlayState extends GameState {
 		steps = ImageToolkit.approximateImage(img, pal);
 		System.out.println("Pushing texture from CPU mem to GPU mem.");
 		goalImage = new Texture(img);
+		System.out.println("Disposing of unused pixel map.");
 		img.dispose();
 		
 		// Set the time limit
@@ -161,9 +162,7 @@ public class PlayState extends GameState {
 		
 		// Select the most recent trigger
 		int latestTrigger = 0;
-		while(timeMarkers.length < latestTrigger+1 && timeMarkers[latestTrigger+1] < completionAmount) {
-			latestTrigger++; // TODO: We don't have to scan here.
-		}
+		for(int i=0; i < timeMarkers.length; i++) { if(completionAmount > timeMarkers[i]) { latestTrigger = i; } else { break; } }
 		
 		// Set the emotion
 		// Set the text
@@ -175,8 +174,7 @@ public class PlayState extends GameState {
 		}
 		
 		// TODO: Calculate steps and update the teacher image if we need to.
-		step = (int)(completionAmount*steps.length);
-		ImageToolkit.drawPixelsToImage(teacherCanvas, steps, pal, step);
+		ImageToolkit.drawPixelsToImage(teacherCanvas, steps, pal, completionAmount);
 		// if(advanceToNextStep)
 		if(teacherImage != null) { teacherImage.dispose(); }
 		teacherImage = new Texture(teacherCanvas);
@@ -203,14 +201,14 @@ public class PlayState extends GameState {
 	public void render(float dt) {
 		if(!loaded) { return; }
 		
-		Gdx.gl.glClearColor(0, 0.5f, 1f, 1);
+		Gdx.gl.glClearColor(0f, 0f, 0f, 1.0f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		batch.draw(goalImage, 0f, 0f);
-		if(teacherImage != null) { batch.draw(teacherImage, goalImage.getWidth(), 0); } //We only update the teacher image once in a while, so don't regernerate it every time.
+		//batch.draw(goalImage, 0f, 0f);
+		if(teacherImage != null) { batch.draw(teacherImage, 0, 0); } //We only update the teacher image once in a while, so don't regernerate it every time.
 		userCanvas.render(batch);
 		for(Button b : colorSelection) {
 			b.render(batch);
