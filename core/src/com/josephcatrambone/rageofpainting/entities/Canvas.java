@@ -60,7 +60,7 @@ public class Canvas implements Updateable, Renderable{
 					canvas.setColor(brushColor);
 					// The canvas is actually 'upside down'.  <0,0> is the top left and y grows down.
 					int xPrime = (int)x-(brushSize/2)-(int)position.x;
-					int yPrime = canvas.getHeight()-((int)y-(brushSize/2)-(int)position.y);				
+					int yPrime = canvas.getHeight()-((int)y+(brushSize/2)-(int)position.y);				
 					canvas.fillRectangle(xPrime, yPrime, brushSize, brushSize);
 				}
 			}
