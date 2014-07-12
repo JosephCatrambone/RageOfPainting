@@ -186,31 +186,32 @@ public class PlayState extends GameState {
 		// Done
 		controls[0] = new Button(buttonTexture, 0, 0, new Runnable() {
 			public void run() {
-				accumulatedTime = episodeDuration;
+				// Jump to half the remaining time.
+				accumulatedTime += Math.max(0, (episodeDuration-accumulatedTime)*0.5);
 			}
 		});
-		controls[0].setText("Done");
+		controls[0].setText(">>");
 		// Preview completed
 		controls[1] = new Button(buttonTexture, 1*buttonTexture.getWidth(), 0, new Runnable() {
 			public void run() {
 				showHint = !showHint;
 			}
 		});
-		controls[1].setText("Show Goal");
+		controls[1].setText("?");
 		// Enlarge brush
 		controls[2] = new Button(buttonTexture, 2*buttonTexture.getWidth(), 0, new Runnable() {
 			public void run() {
 				userCanvas.brushSize += 1;
 			}
 		});
-		controls[2].setText("Brush+");
+		controls[2].setText("[+]");
 		// Shrink brush
 		controls[3] = new Button(buttonTexture, 3*buttonTexture.getWidth(), 0, new Runnable() {
 			public void run() {
 				userCanvas.brushSize = Math.max(userCanvas.brushSize-1, 1);
 			}
 		});
-		controls[3].setText("Brush-");
+		controls[3].setText("[-]");
 		
 		textOut.setText(hostComments[0]);
 	}
