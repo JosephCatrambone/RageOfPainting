@@ -28,7 +28,8 @@ import com.josephcatrambone.rageofpainting.handlers.InputManager;
 import com.josephcatrambone.rageofpainting.handlers.TweenManager;
 
 public class PlayState extends GameState {
-	private static final Vector2 teacherCanvasLocation = new Vector2(40, 80);
+	private static final Vector2 teacherCanvasLocation = new Vector2(200, 160);
+	private static final String BUTTON_TEXTURE = "button_up.png";
 	
 	private BitmapFont font;
 	private SpriteBatch batch;
@@ -63,6 +64,8 @@ public class PlayState extends GameState {
 	public PlayState(String scriptFilename) {
 		super();
 		final int TOOLBAR_HEIGHT = 32;
+		Texture buttonTexture = Game.assetManager.get(BUTTON_TEXTURE, Texture.class);
+		
 		camera = Game.mainCamera;
 		batch = Game.spriteBatch;
 		font = Game.font;
@@ -73,7 +76,7 @@ public class PlayState extends GameState {
 		camera.update();
 		
 		// Create our text output.
-		textOut = new TextDisplay(0, 0, Game.VIRTUAL_WIDTH/2, Game.VIRTUAL_HEIGHT/6, font);
+		textOut = new TextDisplay(0, buttonTexture.getHeight(), Game.VIRTUAL_WIDTH/2, Game.VIRTUAL_HEIGHT/6, font);
 		lastScriptMarker = 0;
 		
 		// Convert the script filename into the actual script.
@@ -103,7 +106,7 @@ public class PlayState extends GameState {
 			Pixmap img = new Pixmap(Gdx.files.internal(imageFilename));
 			teacherCanvas = new Pixmap(img.getWidth(), img.getHeight(), Format.RGBA8888);
 			teacherImage = new Texture(teacherCanvas);
-			userCanvas = new Canvas(Game.VIRTUAL_WIDTH/2, TOOLBAR_HEIGHT, img.getWidth(), img.getHeight()); // TODO: Move over the canvas to fit the aspect ratio.
+			userCanvas = new Canvas(Game.VIRTUAL_WIDTH/2, buttonTexture.getHeight(), img.getWidth(), img.getHeight()); // TODO: Move over the canvas to fit the aspect ratio.
 			userCanvas.brushSize = 3;
 			userCanvas.INTERPOLATION_LEVEL = 10;
 			
@@ -168,9 +171,9 @@ public class PlayState extends GameState {
 			Pixmap pm = new Pixmap(buttonWidth, TOOLBAR_HEIGHT, Format.RGBA8888);
 			pm.setColor(pal[i]);
 			pm.fillRectangle(0, 0, buttonWidth, TOOLBAR_HEIGHT);
-			Texture buttonTexture = new Texture(pm);
+			Texture colorButtonTexture = new Texture(pm);
 			final Integer color = pal[i];
-			colorSelection[i] = new Button(buttonTexture, i*buttonWidth+(Game.VIRTUAL_WIDTH/2), 0, new Runnable() {
+			colorSelection[i] = new Button(colorButtonTexture, i*buttonWidth+(Game.VIRTUAL_WIDTH/2), 0, new Runnable() {
 				public void run() {
 					userCanvas.brushColor = color;
 				}
@@ -179,14 +182,35 @@ public class PlayState extends GameState {
 		}
 		
 		// Create our brush and sequence control buttons
-		controls = new Button[0];
-		/*
-		controls[0] = new Button(null, 0, 0, new Runnable() {
+		controls = new Button[4];
+		// Done
+		controls[0] = new Button(buttonTexture, 0, 0, new Runnable() {
 			public void run() {
-				
+				accumulatedTime = episodeDuration;
 			}
 		});
-		*/
+		controls[0].setText("Done");
+		// Preview completed
+		controls[1] = new Button(buttonTexture, 1*buttonTexture.getWidth(), 0, new Runnable() {
+			public void run() {
+				showHint = !showHint;
+			}
+		});
+		controls[1].setText("Show Goal");
+		// Enlarge brush
+		controls[2] = new Button(buttonTexture, 2*buttonTexture.getWidth(), 0, new Runnable() {
+			public void run() {
+				userCanvas.brushSize += 1;
+			}
+		});
+		controls[2].setText("Brush+");
+		// Shrink brush
+		controls[3] = new Button(buttonTexture, 3*buttonTexture.getWidth(), 0, new Runnable() {
+			public void run() {
+				userCanvas.brushSize = Math.max(userCanvas.brushSize-1, 1);
+			}
+		});
+		controls[3].setText("Brush-");
 		
 		textOut.setText(hostComments[0]);
 	}
