@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.josephcatrambone.rageofpainting.handlers.GameStateManager;
 import com.josephcatrambone.rageofpainting.handlers.ImageToolkit;
@@ -49,7 +50,11 @@ public class Game extends ApplicationAdapter {
 		Game.mainCamera = new OrthographicCamera(Game.VIRTUAL_WIDTH, Game.VIRTUAL_HEIGHT);
 		Game.mainCamera.setToOrtho(false, Game.VIRTUAL_WIDTH, Game.VIRTUAL_HEIGHT);
 		Game.spriteBatch = new SpriteBatch();
-		Game.font = new BitmapFont();
+		
+		// Load the font.
+		Game.assetManager.load("font_visitor.png", Texture.class);
+		Game.assetManager.finishLoading();
+		Game.font = new BitmapFont(Gdx.files.internal("font_visitor.fnt"), new TextureRegion(Game.assetManager.get("font_visitor.png", Texture.class)));
 
 		stateManager.pushState(new LoadingState()); // Open with a loading state.
 		stateManager.setState(new MainMenuState());
