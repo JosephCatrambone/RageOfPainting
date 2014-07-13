@@ -6,10 +6,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.josephcatrambone.rageofpainting.Game;
 import com.josephcatrambone.rageofpainting.handlers.InputManager;
 
 public class Button implements Renderable, Updateable {
-	private static BitmapFont font = null;
+	private static BitmapFont font = Game.font;
 	public Texture releasedTexture = null;
 	public Texture pushedTexture = null; // If null, will use releasedTexture for all drawing.
 	public String text = "";
@@ -21,7 +22,6 @@ public class Button implements Renderable, Updateable {
 	private boolean wasPressed;
 	
 	public Button(Texture texture, float x, float y, Runnable onRelease) {
-		if(Button.font == null) { font = new BitmapFont(); }
 		this.releasedTexture = texture;
 		this.position = new Vector2(x, y);
 		this.onRelease = onRelease;
@@ -29,7 +29,6 @@ public class Button implements Renderable, Updateable {
 	}
 	
 	public Button(Texture texture, float x, float y, String txt, Runnable onRelease) {
-		if(Button.font == null) { font = new BitmapFont(); }
 		this.releasedTexture = texture;
 		this.position = new Vector2(x, y);
 		this.onRelease = onRelease;
@@ -42,7 +41,11 @@ public class Button implements Renderable, Updateable {
 		} else {
 			sb.draw(pushedTexture, position.x, position.y);
 		}
-		font.draw(sb, text, position.x + textOffset.x, position.y + textOffset.y);
+		
+		if(text != "") {
+			font.drawWrapped(sb, text, position.x+textOffset.x, position.y+textOffset.y, releasedTexture.getWidth());
+			//font.draw(sb, text, position.x + textOffset.x, position.y + textOffset.y);
+		}
 	}
 	
 	public void update(float dt) {
@@ -71,8 +74,13 @@ public class Button implements Renderable, Updateable {
 	public void setText(String txt) {
 		this.text = txt;
 		textOffset = new Vector2(
-				releasedTexture.getWidth()/2 - font.getMultiLineBounds(txt).width/2,
-				releasedTexture.getHeight()/2 - font.getMultiLineBounds(txt).height/2
+				releasedTexture.getWidth()/2 - font.getWrappedBounds(txt, releasedTexture.getWidth()).width/2,
+				releasedTexture.getHeight()/2 + font.getWrappedBounds(txt, releasedTexture.getHeight()).height/2
 		);
+	}
+	
+	public void setText(String text, float xOffset, float yOffset) {
+		this.text = text;
+		this.textOffset = new Vector2(xOffset, yOffset);
 	}
 }
