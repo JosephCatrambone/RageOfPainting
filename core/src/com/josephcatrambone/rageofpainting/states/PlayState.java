@@ -28,7 +28,7 @@ import com.josephcatrambone.rageofpainting.handlers.InputManager;
 import com.josephcatrambone.rageofpainting.handlers.TweenManager;
 
 public class PlayState extends GameState {
-	private static final Vector2 teacherCanvasLocation = new Vector2(200, 160);
+	private static final Vector2 teacherCanvasLocation = new Vector2(180, 90);
 	private static final String BUTTON_TEXTURE = "button_up.png";
 	
 	private BitmapFont font;
@@ -37,6 +37,7 @@ public class PlayState extends GameState {
 	
 	// Level logic
 	private boolean loaded = false;
+	private String levelName; // What do we call this?
 	private float passThreshold; // How close the images have to be for passing
 	private float episodeDuration; // How long this stage lasts
 	private float accumulatedTime; // How long we've been in this level
@@ -52,8 +53,6 @@ public class PlayState extends GameState {
 	private Pixmap teacherCanvas = null;
 	private int[] pal = null;
 	private int[][] steps = null;
-	private int step = 0;
-	private boolean play = false;
 	private TextDisplay textOut = null;
 	
 	// User pieces
@@ -98,7 +97,7 @@ public class PlayState extends GameState {
 			//JsonParser json = Json.createparser(new InputStream(new URL()));
 			
 			// Set level name
-			String levelName = fin.nextLine();
+			levelName = fin.nextLine();
 			
 			// Set level image
 			String imageFilename = fin.nextLine();
@@ -237,7 +236,12 @@ public class PlayState extends GameState {
 		
 		// Check completion
 		if(completionAmount >= 1.0) {
-			Game.stateManager.popState();
+			Pixmap goal = new Pixmap(teacherCanvas.getWidth(), teacherCanvas.getHeight(), teacherCanvas.getFormat());
+			goal.drawPixmap(teacherCanvas, 0, 0);
+			Pixmap src = userCanvas.getCopyOfPixmap();
+			GameState nextScreen = new ScoreState(levelName, passThreshold, goal, src);
+			Game.stateManager.setState(nextScreen);
+			this.dispose();
 		}
 		
 		// TODO: Calculate steps and update the teacher image if we need to.
