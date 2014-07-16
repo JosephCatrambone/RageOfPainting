@@ -3,6 +3,7 @@ package com.josephcatrambone.rageofpainting.states;
 import java.awt.image.DirectColorModel;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -11,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.josephcatrambone.rageofpainting.Game;
+import com.josephcatrambone.rageofpainting.handlers.InputManager;
 import com.josephcatrambone.rageofpainting.handlers.TweenManager;
 
 public class ScoreState extends GameState {
@@ -20,10 +22,12 @@ public class ScoreState extends GameState {
 	private BitmapFont font = null;
 	private Texture objective;
 	private Texture attempt;
-	private String result = "";
 	
-	private float distance;
-	private float minDistance;
+	private String[] judgeSayings = {"", "", ""};
+	private String result = "";
+	private float[] distances = {-1, -1, -1};
+	
+	private float maxDistance;
 	private Thread calculator;
 	
 	public ScoreState(String levelName, float successThreshold, Pixmap objective, Pixmap attempt) {
@@ -34,19 +38,16 @@ public class ScoreState extends GameState {
 		this.objective = new Texture(objective);
 		this.attempt = new Texture(attempt);
 		
-		this.distance = -1;
-		this.minDistance = successThreshold;
+		this.maxDistance = successThreshold;
 		
 		final Pixmap obj = objective;
 		final Pixmap att = attempt;
 		calculator = new Thread() {
 			public void run() {
-				byte[] hashA = getHash(obj);
-				byte[] hashB = getHash(att);
-				System.out.println("Objective hash: " + hashToString(hashA));
-				System.out.println("Attempt hash: " + hashToString(hashB));
-				float interObjectDistance = (getDistance(hashA, hashB) / getMaxDistance());
-				distance = interObjectDistance;
+				float maxDist = getMaxDistance();
+				distances[0] = getDistance(getBasicHash(obj), getBasicHash(att)) / maxDist;
+				distances[1] = getDistance(getSubsampleHash(obj), getSubsampleHash(att)) / maxDist;
+				distances[2] = getDistance(getPHash(obj), getPHash(att)) / maxDist;
 			}
 		};
 		calculator.start();
@@ -54,13 +55,35 @@ public class ScoreState extends GameState {
 
 	@Override
 	public void update(float dt) {
-		result = "Distance: ";
-		if(distance == -1) {
-			result += Math.random() * 100 + "%";
-		} else {
-			result += "" + (100*distance) + "%";
+		result = "Result: Pending...";
+		int judgePasses = 0;
+		int judgesPending = 3;
+		
+		// Calculate judge sayings
+		for(int i=0; i < 3; i++) {
+			if(distances[i] == -1) {
+				judgeSayings[i] = "Judge " + i + ": Deciding...";
+			} else {
+				judgesPending--;
+				judgeSayings[i] = "Judge " + i + ": " + (int)(10*(1.0-distances[i])) + "/10";
+				if(distances[i] < maxDistance) {
+					judgePasses++;
+				}
+			}
 		}
 		
+		// And the verdict
+		if(judgesPending < 1) {
+			if(judgePasses > 2) {
+				result = "Result: Pass! (Press k to return to the main menu.)";
+			} else {
+				result = "Result: Failure! (Press k to return to the main menu.)";
+			}
+		}
+		
+		if(InputManager.isKeyDown('k')) {
+			Game.stateManager.popState();
+		}
 	}
 
 	@Override
@@ -75,6 +98,10 @@ public class ScoreState extends GameState {
 		batch.draw(objective, padding, padding);
 		batch.draw(attempt, Game.VIRTUAL_WIDTH-attempt.getWidth()-padding, padding);
 		
+		font.draw(batch, judgeSayings[0], padding, Game.VIRTUAL_HEIGHT-2*padding);
+		font.draw(batch, judgeSayings[1], padding, Game.VIRTUAL_HEIGHT-3*padding);
+		font.draw(batch, judgeSayings[2], padding, Game.VIRTUAL_HEIGHT-4*padding);
+		
 		font.draw(batch, result, Game.VIRTUAL_WIDTH/2 - font.getBounds(result).width/2, padding/2);
 		
 		batch.end();
@@ -85,8 +112,89 @@ public class ScoreState extends GameState {
 		// TODO Auto-generated method stub
 
 	}
-
+	
 	public byte[] getHash(Pixmap img) {
+		return getSubsampleHash(img);
+	}
+	
+	public byte[] getBasicHash(Pixmap img) {
+		byte[] output = new byte[8];
+		
+		float mean = 0.0f;
+		float sum = 0.0f;
+		
+		Pixmap tempImg = new Pixmap(8, 8, Format.RGBA8888);
+		tempImg.drawPixmap(img, 0, 0, img.getWidth(), img.getHeight(), 0, 0, 8, 8);
+		
+		DirectColorModel cm = new DirectColorModel(32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
+		for(int j=0; j < tempImg.getHeight(); j++) {
+			for(int i=0; i < tempImg.getWidth(); i++) {
+				int pixel = tempImg.getPixel(i, j);
+				float r = cm.getRed(pixel);
+				float g = cm.getGreen(pixel);
+				float b = cm.getBlue(pixel);
+				sum += (r/255f + g/255f + b/255f)/3f;
+			}
+		}
+		
+		mean = sum/(float)(tempImg.getWidth()*tempImg.getHeight());
+		
+		for(int j=0; j < 8; j++) {
+			int newByte = 0;
+			for(int i=0; i < 8; i++) {
+				int pixel = img.getPixel(i, j);
+				float r = cm.getRed(pixel);
+				float g = cm.getGreen(pixel);
+				float b = cm.getBlue(pixel);
+				if((r/255f + g/255f + b/255f)/3f > mean) {
+					newByte += 1;
+				}
+				newByte = newByte << 1;
+			}
+			output[j] = (byte)newByte;
+		}
+		
+		return output;
+	}
+	
+	public byte[] getSubsampleHash(Pixmap img) {
+		byte[] output = new byte[8];
+		
+		float mean = 0.0f;
+		float sum = 0.0f;
+		
+		DirectColorModel cm = new DirectColorModel(32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
+		for(int j=0; j < img.getHeight(); j++) {
+			for(int i=0; i < img.getWidth(); i++) {
+				int pixel = img.getPixel(i, j);
+				float r = cm.getRed(pixel);
+				float g = cm.getGreen(pixel);
+				float b = cm.getBlue(pixel);
+				sum += (r/255f + g/255f + b/255f)/3f;
+			}
+		}
+		
+		mean = sum/(float)(img.getWidth()*img.getHeight());
+		
+		for(int j=0; j < 8; j++) {
+			int newByte = 0;
+			for(int i=0; i < 8; i++) {
+				int pixel = img.getPixel(i*(img.getWidth()/8), j*(img.getHeight()/8));
+				float r = cm.getRed(pixel);
+				float g = cm.getGreen(pixel);
+				float b = cm.getBlue(pixel);
+				if((r/255f + g/255f + b/255f)/3f > mean) {
+					newByte += 1;
+				}
+				newByte = newByte << 1;
+			}
+			output[j] = (byte)newByte;
+		}
+		
+		return output;
+	}
+
+	public byte[] getPHash(Pixmap img) {
 		// Perform a DCT hash of the specified image.
 		byte[] output = new byte[8];
 		double[] result = new double[32*32];
