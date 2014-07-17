@@ -1,12 +1,9 @@
 package com.josephcatrambone.rageofpainting;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -17,13 +14,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.josephcatrambone.rageofpainting.handlers.GameStateManager;
-import com.josephcatrambone.rageofpainting.handlers.ImageToolkit;
 import com.josephcatrambone.rageofpainting.handlers.InputManager;
 import com.josephcatrambone.rageofpainting.handlers.TweenManager;
 import com.josephcatrambone.rageofpainting.states.GameState;
 import com.josephcatrambone.rageofpainting.states.MainMenuState;
 import com.josephcatrambone.rageofpainting.states.PlayState;
 import com.josephcatrambone.rageofpainting.states.LoadingState;
+import com.josephcatrambone.rageofpainting.states.TitleState;
 
 public class Game extends ApplicationAdapter {
 	
@@ -37,6 +34,7 @@ public class Game extends ApplicationAdapter {
 	public static OrthographicCamera mainCamera;
 	public static SpriteBatch spriteBatch;
 	public static BitmapFont font;
+	public static Music activeMusicTrack = null;
 	
 	private int frameCount;
 	private float timeAccumulator;
@@ -56,8 +54,7 @@ public class Game extends ApplicationAdapter {
 		Game.assetManager.finishLoading();
 		Game.font = new BitmapFont(Gdx.files.internal("font_visitor.fnt"), new TextureRegion(Game.assetManager.get("font_visitor.png", Texture.class)));
 
-		stateManager.pushState(new LoadingState()); // Open with a loading state.
-		stateManager.setState(new MainMenuState());
+		stateManager.pushState(new TitleState());
 	}
 
 	@Override

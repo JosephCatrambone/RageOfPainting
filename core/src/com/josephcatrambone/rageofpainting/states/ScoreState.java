@@ -3,6 +3,7 @@ package com.josephcatrambone.rageofpainting.states;
 import java.awt.image.DirectColorModel;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -81,7 +82,8 @@ public class ScoreState extends GameState {
 			}
 		}
 		
-		if(InputManager.isKeyDown('k')) {
+		if(InputManager.isKeyDown(Input.Keys.K)) {
+			System.out.println("DEBUG: k is down.");
 			Game.stateManager.popState();
 		}
 	}
