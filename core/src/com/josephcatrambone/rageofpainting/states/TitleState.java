@@ -54,6 +54,7 @@ public class TitleState extends GameState {
 			if(Game.activeMusicTrack == null) {
 				Game.activeMusicTrack = Game.assetManager.get("PaintAndMisery.wav", Music.class);
 				Game.activeMusicTrack.play();
+				Game.activeMusicTrack.setLooping(true);
 			}
 		} else {
 			position.y = SMOOTHING*(targetLogoY - position.y) + position.y;

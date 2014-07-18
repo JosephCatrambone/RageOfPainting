@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -28,7 +29,6 @@ import com.josephcatrambone.rageofpainting.handlers.InputManager;
 import com.josephcatrambone.rageofpainting.handlers.TweenManager;
 
 public class PlayState extends GameState {
-	private static final Vector2 teacherCanvasLocation = new Vector2(180, 90);
 	private static final String BUTTON_TEXTURE = "button_up.png";
 	
 	private BitmapFont font;
@@ -47,10 +47,12 @@ public class PlayState extends GameState {
 	private String[] hostComments; // What will our host say?
 	
 	// Demonstration pieces
-	private boolean showHint = true;
+	private boolean showHint = false;
 	private Texture goalImage = null;
 	private Texture teacherImage = null;
+	private Texture backdrop = null;
 	private Pixmap teacherCanvas = null;
+	private Vector2 teacherCanvasLocation = new Vector2(180, 90);
 	private int[] pal = null;
 	private int[][] steps = null;
 	private TextDisplay textOut = null;
@@ -63,6 +65,11 @@ public class PlayState extends GameState {
 	public PlayState(String scriptFilename) {
 		super();
 		final int TOOLBAR_HEIGHT = 32;
+		Game.assetManager.load("backdrop.png", Texture.class);
+		Game.assetManager.load(BUTTON_TEXTURE, Texture.class);
+		Game.assetManager.load("PaintAndMisery.wav", Music.class);
+		Game.assetManager.finishLoading();
+		
 		Texture buttonTexture = Game.assetManager.get(BUTTON_TEXTURE, Texture.class);
 		
 		camera = Game.mainCamera;
@@ -86,13 +93,15 @@ public class PlayState extends GameState {
 			// The file format:
 			//0 EpisodeTemplate // Level Name
 			//1 ImageFilename.png // Image to be loaded
-			//2 number_of_colors // Number of colors on the palette
-			//3 time_limit // How long the user has to complete it
-			//4 0.7 // This is the similarity that the images must have for this level to be passed
-			//5.0 0.0 // This is the percent of the way done we are
-			//5.1 thestate_for_the_painter_to_have.png Or Blank for no change.
-			//5.2 This is a line which the robot will say. 
-			//Repeat 5
+			//2 x draw offset
+			//3 y draw offset
+			//4 number_of_colors // Number of colors on the palette
+			//5 time_limit // How long the user has to complete it
+			//6 0.7 // This is the similarity that the images must have for this level to be passed
+			//7.0 0.0 // This is the percent of the way done we are
+			//7.1 thestate_for_the_painter_to_have.png Or Blank for no change.
+			//7.2 This is a line which the robot will say. 
+			//Repeat 7
 			
 			//JsonParser json = Json.createparser(new InputStream(new URL()));
 			
@@ -105,9 +114,12 @@ public class PlayState extends GameState {
 			Pixmap img = new Pixmap(Gdx.files.internal(imageFilename));
 			teacherCanvas = new Pixmap(img.getWidth(), img.getHeight(), Format.RGBA8888);
 			teacherImage = new Texture(teacherCanvas);
-			userCanvas = new Canvas(Game.VIRTUAL_WIDTH/2, buttonTexture.getHeight(), img.getWidth(), img.getHeight()); // TODO: Move over the canvas to fit the aspect ratio.
+			userCanvas = new Canvas(Game.VIRTUAL_WIDTH*3/4 - img.getWidth()/2, Game.VIRTUAL_HEIGHT/2+buttonTexture.getHeight() - img.getHeight()/2, img.getWidth(), img.getHeight()); // TODO: Move over the canvas to fit the aspect ratio.
 			userCanvas.brushSize = 3;
 			userCanvas.INTERPOLATION_LEVEL = 10;
+			teacherCanvasLocation.x = Integer.parseInt(fin.nextLine());
+			teacherCanvasLocation.y = Integer.parseInt(fin.nextLine()); // TODO: This Integer parse is a holdover from when all we had was line data.  Use the scanner to its full potential with nextInt on rewrite.
+			
 			
 			// Select the number of colors
 			int numColors = Integer.parseInt(fin.nextLine());
@@ -213,6 +225,16 @@ public class PlayState extends GameState {
 		controls[3].setText("[-]");
 		
 		textOut.setText(hostComments[0]);
+		
+		// Load the backdrop
+		backdrop = Game.assetManager.get("backdrop.png", Texture.class);
+		
+		// Finally, play music
+		if(Game.activeMusicTrack == null) {
+			Game.activeMusicTrack = Game.assetManager.get("PaintAndMisery.wav", Music.class);
+			Game.activeMusicTrack.play();
+			Game.activeMusicTrack.setLooping(true);
+		}
 	}
 
 	@Override
@@ -284,10 +306,13 @@ public class PlayState extends GameState {
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		
+		// Draw background
+		batch.draw(backdrop, 0f, 0f);
+		
 		// Render teacher images
-		batch.draw(teacherImage, teacherCanvasLocation.x-(teacherImage.getWidth()/2), teacherCanvasLocation.y-(teacherImage.getHeight()/2));
+		batch.draw(teacherImage, teacherCanvasLocation.x, teacherCanvasLocation.y);
 		if(showHint) {
-			batch.draw(goalImage, teacherCanvasLocation.x-(teacherImage.getWidth()/2), teacherCanvasLocation.y-(teacherImage.getHeight()/2));
+			batch.draw(goalImage, teacherCanvasLocation.x, teacherCanvasLocation.y);
 		}
 		
 		// Render UI

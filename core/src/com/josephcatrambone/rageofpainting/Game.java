@@ -64,7 +64,7 @@ public class Game extends ApplicationAdapter {
 		TweenManager.update(dt);
 		stateManager.update(dt);
 		stateManager.render(dt);
-		calculateFPS(dt);
+		//calculateFPS(dt);
 	}
 	
 	@Override

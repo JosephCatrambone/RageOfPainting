@@ -37,7 +37,7 @@ public class MainMenuState extends GameState {
 		
 		levelButtons = new Button[4];
 		
-		levelButtons[0] = new Button(Game.assetManager.get(BUTTON_TEXTURE, Texture.class), 0f, 100f, "Episode 1", new Runnable() {
+		levelButtons[0] = new Button(Game.assetManager.get(BUTTON_TEXTURE, Texture.class), 50f, 100f, "Episode 1", new Runnable() {
 			public void run() {
 				System.out.println("Loading Level 1");
 				Game.stateManager.pushState(new LoadingState());
@@ -45,7 +45,7 @@ public class MainMenuState extends GameState {
 			}
 		});
 		
-		levelButtons[1] = new Button(Game.assetManager.get(BUTTON_TEXTURE, Texture.class), 0f, 50f, "Episode 2", new Runnable() {
+		levelButtons[1] = new Button(Game.assetManager.get(BUTTON_TEXTURE, Texture.class), 150f, 100f, "Episode 2", new Runnable() {
 			public void run() {
 				System.out.println("Loading Level 2");
 				Game.stateManager.pushState(new LoadingState());
@@ -53,7 +53,7 @@ public class MainMenuState extends GameState {
 			}
 		});
 		
-		levelButtons[2] = new Button(Game.assetManager.get(BUTTON_TEXTURE, Texture.class), 0f, 0f, "Episode 3", new Runnable() {
+		levelButtons[2] = new Button(Game.assetManager.get(BUTTON_TEXTURE, Texture.class), 250f, 100f, "Episode 3", new Runnable() {
 			public void run() {
 				System.out.println("Loading Level 3");
 				Game.stateManager.pushState(new LoadingState());
@@ -61,7 +61,7 @@ public class MainMenuState extends GameState {
 			}
 		});
 		
-		levelButtons[3] = new Button(Game.assetManager.get(BUTTON_TEXTURE, Texture.class), 100f, 100f, "Episode 4", new Runnable() {
+		levelButtons[3] = new Button(Game.assetManager.get(BUTTON_TEXTURE, Texture.class), 350f, 100f, "Episode 4", new Runnable() {
 			public void run() {
 				System.out.println("Loading Level 4");
 				Game.stateManager.pushState(new LoadingState());

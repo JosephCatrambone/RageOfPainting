@@ -76,14 +76,14 @@ public class ScoreState extends GameState {
 		// And the verdict
 		if(judgesPending < 1) {
 			if(judgePasses > 2) {
-				result = "Result: Pass! (Press k to return to the main menu.)";
+				result = "Result: Pass! (Click anywhere to return to the main menu.)";
 			} else {
-				result = "Result: Failure! (Press k to return to the main menu.)";
+				result = "Result: Failure! (Click anywhere to return to the main menu.)";
 			}
 		}
 		
-		if(InputManager.isKeyDown(Input.Keys.K)) {
-			System.out.println("DEBUG: k is down.");
+		if(InputManager.isMouseDown(0)) {
+		//if(InputManager.isKeyDown(Input.Keys.K)) {
 			Game.stateManager.popState();
 		}
 	}
