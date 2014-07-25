@@ -88,22 +88,77 @@ public class PlayState extends GameState {
 		lastScriptMarker = 0;
 		
 		// Convert the script filename into the actual script.
+		scriptLoad(scriptFilename);
+		
+		// Create our palette buttons
+		colorSelection = new Button[pal.length]; // All the colors plus brush enlarge and brush shrink.
+		int buttonWidth = (Game.VIRTUAL_WIDTH/2)/colorSelection.length;
+		for(int i=0; i < colorSelection.length; i++) {
+			Pixmap pm = new Pixmap(buttonWidth, TOOLBAR_HEIGHT, Format.RGBA8888);
+			pm.setColor(pal[i]);
+			pm.fillRectangle(0, 0, buttonWidth, TOOLBAR_HEIGHT);
+			Texture colorButtonTexture = new Texture(pm);
+			final Integer color = pal[i];
+			colorSelection[i] = new Button(colorButtonTexture, i*buttonWidth+(Game.VIRTUAL_WIDTH/2), 0, new Runnable() {
+				public void run() {
+					userCanvas.brushColor = color;
+				}
+			});
+			pm.dispose();
+		}
+		
+		// Create our brush and sequence control buttons
+		controls = new Button[4];
+		// Done
+		controls[0] = new Button(buttonTexture, 0, 0, new Runnable() {
+			public void run() {
+				// Jump to half the remaining time.
+				accumulatedTime += Math.max(0, (episodeDuration-accumulatedTime)*0.5);
+			}
+		});
+		controls[0].setText(">>");
+		// Preview completed
+		controls[1] = new Button(buttonTexture, 1*buttonTexture.getWidth(), 0, new Runnable() {
+			public void run() {
+				showHint = !showHint;
+			}
+		});
+		controls[1].setText("?");
+		// Enlarge brush
+		controls[2] = new Button(buttonTexture, 2*buttonTexture.getWidth(), 0, new Runnable() {
+			public void run() {
+				userCanvas.brushSize += 1;
+			}
+		});
+		controls[2].setText("[+]");
+		// Shrink brush
+		controls[3] = new Button(buttonTexture, 3*buttonTexture.getWidth(), 0, new Runnable() {
+			public void run() {
+				userCanvas.brushSize = Math.max(userCanvas.brushSize-1, 1);
+			}
+		});
+		controls[3].setText("[-]");
+		
+		textOut.setText(hostComments[0]);
+		
+		// Load the backdrop
+		backdrop = Game.assetManager.get("backdrop.png", Texture.class);
+		
+		// Finally, play music
+		// TODO: Make sure we stop other tracks which are playing.
+		if(Game.activeMusicTrack != null && Game.activeMusicTrack.isPlaying()) { Game.activeMusicTrack.stop(); }
+		Game.activeMusicTrack = Game.assetManager.get("PaintAndMisery.ogg", Music.class);
+		Game.activeMusicTrack.play();
+		Game.activeMusicTrack.setLooping(true);
+	}
+	
+	private void scriptLoad(String scriptFilename) {
 		try {
 			InputStream fstream = Gdx.files.internal(scriptFilename).read();
 			Scanner fin = new Scanner(fstream);
+			Texture buttonTexture = Game.assetManager.get(BUTTON_TEXTURE, Texture.class);
 			
-			// The file format:
-			//0 EpisodeTemplate // Level Name
-			//1 ImageFilename.png // Image to be loaded
-			//2 x draw offset
-			//3 y draw offset
-			//4 number_of_colors // Number of colors on the palette
-			//5 time_limit // How long the user has to complete it
-			//6 0.7 // This is the similarity that the images must have for this level to be passed
-			//7.0 0.0 // This is the percent of the way done we are
-			//7.1 thestate_for_the_painter_to_have.png Or Blank for no change.
-			//7.2 This is a line which the robot will say. 
-			//Repeat 7
+			// The file format is detailed in ScriptTemplate.
 			
 			//JsonParser json = Json.createparser(new InputStream(new URL()));
 			
@@ -182,67 +237,6 @@ public class PlayState extends GameState {
 			// TODO Handle io exception
 			ioe.printStackTrace();
 			loaded = false;
-		}
-		
-		// Create our palette buttons
-		colorSelection = new Button[pal.length]; // All the colors plus brush enlarge and brush shrink.
-		int buttonWidth = (Game.VIRTUAL_WIDTH/2)/colorSelection.length;
-		for(int i=0; i < colorSelection.length; i++) {
-			Pixmap pm = new Pixmap(buttonWidth, TOOLBAR_HEIGHT, Format.RGBA8888);
-			pm.setColor(pal[i]);
-			pm.fillRectangle(0, 0, buttonWidth, TOOLBAR_HEIGHT);
-			Texture colorButtonTexture = new Texture(pm);
-			final Integer color = pal[i];
-			colorSelection[i] = new Button(colorButtonTexture, i*buttonWidth+(Game.VIRTUAL_WIDTH/2), 0, new Runnable() {
-				public void run() {
-					userCanvas.brushColor = color;
-				}
-			});
-			pm.dispose();
-		}
-		
-		// Create our brush and sequence control buttons
-		controls = new Button[4];
-		// Done
-		controls[0] = new Button(buttonTexture, 0, 0, new Runnable() {
-			public void run() {
-				// Jump to half the remaining time.
-				accumulatedTime += Math.max(0, (episodeDuration-accumulatedTime)*0.5);
-			}
-		});
-		controls[0].setText(">>");
-		// Preview completed
-		controls[1] = new Button(buttonTexture, 1*buttonTexture.getWidth(), 0, new Runnable() {
-			public void run() {
-				showHint = !showHint;
-			}
-		});
-		controls[1].setText("?");
-		// Enlarge brush
-		controls[2] = new Button(buttonTexture, 2*buttonTexture.getWidth(), 0, new Runnable() {
-			public void run() {
-				userCanvas.brushSize += 1;
-			}
-		});
-		controls[2].setText("[+]");
-		// Shrink brush
-		controls[3] = new Button(buttonTexture, 3*buttonTexture.getWidth(), 0, new Runnable() {
-			public void run() {
-				userCanvas.brushSize = Math.max(userCanvas.brushSize-1, 1);
-			}
-		});
-		controls[3].setText("[-]");
-		
-		textOut.setText(hostComments[0]);
-		
-		// Load the backdrop
-		backdrop = Game.assetManager.get("backdrop.png", Texture.class);
-		
-		// Finally, play music
-		if(Game.activeMusicTrack == null) {
-			Game.activeMusicTrack = Game.assetManager.get("PaintAndMisery.ogg", Music.class);
-			Game.activeMusicTrack.play();
-			Game.activeMusicTrack.setLooping(true);
 		}
 	}
 

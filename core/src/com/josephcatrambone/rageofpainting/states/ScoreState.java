@@ -4,6 +4,7 @@ import java.awt.image.DirectColorModel;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -52,6 +53,11 @@ public class ScoreState extends GameState {
 			}
 		};
 		calculator.start();
+		
+		if(Game.activeMusicTrack != null && Game.activeMusicTrack.isPlaying()) { Game.activeMusicTrack.stop(); }
+		Game.activeMusicTrack = Game.assetManager.get("MasterpieceComplete.ogg", Music.class);
+		Game.activeMusicTrack.play();
+		Game.activeMusicTrack.setLooping(false);
 	}
 
 	@Override

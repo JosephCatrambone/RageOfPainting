@@ -39,6 +39,7 @@ public class TitleState extends GameState {
 		//TweenManager.addTween((Object)position, "y", -200f, Game.VIRTUAL_HEIGHT/2 - texture.getHeight()/2, SPLASH_DELAY);
 		Game.assetManager.load("title.png", Texture.class);
 		Game.assetManager.load("PaintAndMisery.ogg", Music.class);
+		Game.assetManager.load("MasterpieceComplete.ogg", Music.class);
 	}
 	
 	@Override
