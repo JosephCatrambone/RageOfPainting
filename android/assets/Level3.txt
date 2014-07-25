@@ -1,28 +1,40 @@
 Poem
 poem.png
-120
+100
 170
 8
-300
+120
 0.5
 0.0
 robot.png
 Welcome to the show.  I'm your host BOB r055.
-0.05
-robot.png
-
-0.1
+10
 robot.png
 Today we're painting the well respected indie developer Poemdexter.
-0.2
+20
 robot.png
 Poemdexter is best known for the hit game Fez.
-0.3
+30
 robot.png
 His other, less popular titles include Doom and Final Fantasy.
-0.5
+40
 robot.png
-We're almost half way done with our show.  Finish up.
-0.9
+Indie game development is for children and morons.
+45
 robot_glee.png
-Blah blah blah.  Almost done.
+
+60
+robot.png
+We're nearly done with the background. Let's move on to the hair and face.
+70
+robot.png
+Human hair is made mostly of keratin, the same material as your fingernails.
+80
+robot.png
+Now we'll go around and start fleshing out the face.
+90
+robot.png
+Human electromagnetic transducers are not user serviceable. They require external enhancement.  
+110
+robot.png
+We're nearly finished now.  Wrap up the last details.

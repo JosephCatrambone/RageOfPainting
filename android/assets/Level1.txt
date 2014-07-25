@@ -1,7 +1,7 @@
 Introduction
 square.png
 100
-100
+150
 2
 120
 0.5

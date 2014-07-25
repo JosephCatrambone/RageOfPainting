@@ -1,19 +1,64 @@
 Jeb
 Jebediah_Kerman.png
-50
-120
+100
+160
 12
-500
-0.7
+300
+0.75
 0.0
 robot.png
 Welcome to the show.  I'm your host BOB r055.
-0.1
+7
 robot.png
-Blah blah blah  
-0.5
+Today we are painting Jebediah Kerman.  
+15
 robot.png
-Hurry up.
-0.9
+Jeb is a member of the Kerbal Space Team.
+27
 robot_glee.png
-Blah blah blah.
+He represents humanity's continued delusion that they will occupy the stars before they destroy each other.
+40
+robot.png
+We begin by filling in the backdrop.
+50
+robot.png
+The mushroom cloud, and Jeb's obliviousness to it, mirror humanity's ignorance to its own oblivion.
+100
+robot.png
+Humans require space suits to survive the oxygen free vacuum of space.
+110
+robot.png
+Surprisingly, they will not explode when exposed to the vacuum.
+120
+robot.png
+However, the process which brings oxygen from the lungs to the brain operates in reverse.
+130
+robot.png
+Oxygen is drawn out of the blood in a matter of seconds.
+140
+robot_glee.png
+Unconsciousness sets in after less than twenty seconds.
+150
+robot.png
+Asphyxiation takes only a few minutes to cause irreperable damage.
+160
+robot_goddamnit.png
+Unless they are rescued.
+170
+robot.png
+
+240
+robot.png
+There is one minute remaining.
+260
+robot.png
+Thank you for playing our game.
+270
+robot.png
+Props to Ultigonio for making the bitchin' music you hear now.
+280
+robot_glee.png
+Your music makes me happy.
+290
+robot.png
+Good luck goons. We're out. Game is ovah.
