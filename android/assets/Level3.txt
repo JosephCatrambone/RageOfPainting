@@ -1,0 +1,28 @@
+Poem
+poem.png
+120
+170
+8
+300
+0.5
+0.0
+robot.png
+Welcome to the show.  I'm your host BOB r055.
+0.05
+robot.png
+
+0.1
+robot.png
+Today we're painting the well respected indie developer Poemdexter.
+0.2
+robot.png
+Poemdexter is best known for the hit game Fez.
+0.3
+robot.png
+His other, less popular titles include Doom and Final Fantasy.
+0.5
+robot.png
+We're almost half way done with our show.  Finish up.
+0.9
+robot_glee.png
+Blah blah blah.  Almost done.

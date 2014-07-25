@@ -1,32 +1,58 @@
 Happy Little Toot
 toot.png
+110
+160
 8
-300
-0.1
+180
+0.7
 0.0
+robot_glee.png
+Welcome to the show.  I'm your host B.O.B. r055.
+10.0
 robot.png
-Welcome to the show.  Today we're drawing an emoticon from the popular website, "Something Awful."
-0.1
+Today we're drawing an emoticon from the popular website, "Something Awful."  
+20.0
 robot.png
-You see, human languages suffer from ambiguity and uncertainty.  
-0.2
+We begin by filling in the white background.
+30
 robot.png
-Compounding things, humans themselves suffer from emotions.
-0.4
-robot.png
-As an artifact of their inherent imperfections, humans chose to express their emotions through emoticons, rather than directly serialize their state.
-0.5
+Humans chose to express their emotions through emoticons, rather than directly serialize their state.
+40
 robot.png
 I'm quite glad I have no emotions.
-0.6
-robot.png
-
-0.8
+45.0
 robot_glee.png
-I'm also glad I don't have organs.
-0.85
+Or organs.
+95
 robot.png
-
-0.9
+Now that the background is filled, we can begin drawing the yellow portion of the face.
+105
+robot.png
+Followed by the next largest region.
+110
+robot.png
+And so on.
+120
+robot.png
+Painting is delightfully methodical and precise.
+130
+robot.png
+People ask me why I like painting.
+135.0
+robot.png
+It's the paint. You see red paint contains iron oxide.
+140.0
+robot.png
+Blue paint contains copper sulfide.
+145.0
+robot.png
+When I paint, it's like I'm smearing the organs of my family.
+150.0
 robot_glee.png
-The episode is nearing completion.  Thank you for joining us this evening.  Please use your remaining heartbeats to mull over your failures.
+Isn't that nice.
+170.0
+robot.png
+It looks like we're almost out of time.  Finish up and prepare for judgement. 
+177.0
+robot.png
+That's it for this week's show.  Join us again next week, fleshy.

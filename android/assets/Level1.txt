@@ -1,20 +1,37 @@
 Introduction
 square.png
+100
+100
 2
-60
+120
 0.5
 0.0
 robot.png
-Select the black color from your palette on the bottom right and duplicate my image.  This is the Completely Automated Process To Distinguish Humans from Zucchini, or CAPDHZ.
-0.1
+Hello and welcome to the show.  I'm your host B.O.B r055.  
+10.0
 robot.png
-Begin drawing your rectangle by setting the luminosity of the 128x128 section at offset 32x32 to zero.
-0.3
+Today we are painting a black square on a white background.
+20.0
 robot.png
-You can use the 'view' button to get a glimpse of the completed image.
-0.5
+Select the black color from your palette on the bottom right and duplicate my image.
+30.0
+robot.png
+Press the '?' button to toggle viewing the finished image.  
+40.0
+robot.png
+You can use also '+' and '-' to change the size of your brush.
+50.0
 robot_glee.png
-We're about half way done with our episode.  If you finish early, you can use the 'finish' button to skip ever closer to your doom.
-0.9
-robot_glee.png
-The episode is nearing completion.  Thank you for joining us this evening.  Please use your remaining heartbeats to mull over your failures.
+If you wish to accelerate your judgement, you can use the '>>' to jump closer to the end of the episode.
+80.0
+robot.png
+I will begin drawing my square.  Do exactly as I do without deviation.
+90.0
+robot.png
+If you're having problems matching my artistry exactly, it is because you are a weak arcane machine...
+95.0
+robot.png
+... made of fat and proteins.
+110.0
+robot.png
+That's all for our show today.  We hope this experience has been enlightening for you.

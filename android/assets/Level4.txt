@@ -1,0 +1,19 @@
+Jeb
+Jebediah_Kerman.png
+50
+120
+12
+500
+0.7
+0.0
+robot.png
+Welcome to the show.  I'm your host BOB r055.
+0.1
+robot.png
+Blah blah blah  
+0.5
+robot.png
+Hurry up.
+0.9
+robot_glee.png
+Blah blah blah.
