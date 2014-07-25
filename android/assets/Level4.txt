@@ -55,10 +55,10 @@ robot.png
 Thank you for playing our game.
 270
 robot.png
-Props to Ultigonio for making the bitchin' music you hear now.
+Sorry you couldn't join us for the finish, Lord Lambeth. Thanks for trying.
 280
 robot_glee.png
-Your music makes me happy.
+Thank you to Ultigonio for making the bitchin' music you hear now.
 290
 robot.png
 Good luck goons. We're out. Game is ovah.

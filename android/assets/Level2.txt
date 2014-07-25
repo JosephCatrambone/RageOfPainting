@@ -46,13 +46,13 @@ robot.png
 Blue paint contains copper sulfide.
 145.0
 robot.png
-When I paint, it's like I'm smearing the organs of my family.
+When I paint, it's like I'm smearing the organs of my family on the canvas.
 150.0
 robot_glee.png
 Isn't that nice.
 170.0
 robot.png
-It looks like we're almost out of time.  Finish up and prepare for judgement. 
+It looks like we're almost out of time.  Finish and prepare for judgement. 
 177.0
 robot.png
 That's it for this week's show.  Join us again next week, fleshy.
