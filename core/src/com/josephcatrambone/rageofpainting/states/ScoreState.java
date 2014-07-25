@@ -82,7 +82,7 @@ public class ScoreState extends GameState {
 			}
 		}
 		
-		if(InputManager.isMouseDown(0)) {
+		if(InputManager.isMouseDown(0) && judgesPending < 1) { // TODO: Make this just wait for the mouse to be up, then allow any press.
 		//if(InputManager.isKeyDown(Input.Keys.K)) {
 			Game.stateManager.popState();
 		}

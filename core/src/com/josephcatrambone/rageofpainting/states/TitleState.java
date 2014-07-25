@@ -38,7 +38,7 @@ public class TitleState extends GameState {
 		
 		//TweenManager.addTween((Object)position, "y", -200f, Game.VIRTUAL_HEIGHT/2 - texture.getHeight()/2, SPLASH_DELAY);
 		Game.assetManager.load("title.png", Texture.class);
-		Game.assetManager.load("PaintAndMisery.wav", Music.class);
+		Game.assetManager.load("PaintAndMisery.ogg", Music.class);
 	}
 	
 	@Override
@@ -52,7 +52,7 @@ public class TitleState extends GameState {
 			position.y = 0;
 			
 			if(Game.activeMusicTrack == null) {
-				Game.activeMusicTrack = Game.assetManager.get("PaintAndMisery.wav", Music.class);
+				Game.activeMusicTrack = Game.assetManager.get("PaintAndMisery.ogg", Music.class);
 				Game.activeMusicTrack.play();
 				Game.activeMusicTrack.setLooping(true);
 			}

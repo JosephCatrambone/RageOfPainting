@@ -50,6 +50,8 @@ public class PlayState extends GameState {
 	private boolean showHint = false;
 	private Texture goalImage = null;
 	private Texture teacherImage = null;
+	private Texture teacherSprite = null;
+	private Vector2 teacherSpriteLocation = new Vector2(16, 100);
 	private Texture backdrop = null;
 	private Pixmap teacherCanvas = null;
 	private Vector2 teacherCanvasLocation = new Vector2(180, 90);
@@ -67,7 +69,7 @@ public class PlayState extends GameState {
 		final int TOOLBAR_HEIGHT = 32;
 		Game.assetManager.load("backdrop.png", Texture.class);
 		Game.assetManager.load(BUTTON_TEXTURE, Texture.class);
-		Game.assetManager.load("PaintAndMisery.wav", Music.class);
+		Game.assetManager.load("PaintAndMisery.ogg", Music.class);
 		Game.assetManager.finishLoading();
 		
 		Texture buttonTexture = Game.assetManager.get(BUTTON_TEXTURE, Texture.class);
@@ -158,6 +160,13 @@ public class PlayState extends GameState {
 			emotions.toArray(hostEmotions);
 			hostComments = new String[comments.size()];
 			comments.toArray(hostComments);
+			
+			// Load all the emotion states
+			for(String s : hostEmotions) {
+				Game.assetManager.load(s, Texture.class);
+			}
+			Game.assetManager.finishLoading();
+			teacherSprite = Game.assetManager.get(hostEmotions[0], Texture.class);
 
 			//playButton = new Button(goalImage, 0, 0, new Runnable() { public void run() {}; });
 			//TweenManager.addTween(playButton.position, "x", -1, 1, 10, TweenManager.makeTween(playButton.position, "x", 1, -1, 10, null));
@@ -231,7 +240,7 @@ public class PlayState extends GameState {
 		
 		// Finally, play music
 		if(Game.activeMusicTrack == null) {
-			Game.activeMusicTrack = Game.assetManager.get("PaintAndMisery.wav", Music.class);
+			Game.activeMusicTrack = Game.assetManager.get("PaintAndMisery.ogg", Music.class);
 			Game.activeMusicTrack.play();
 			Game.activeMusicTrack.setLooping(true);
 		}
@@ -247,12 +256,14 @@ public class PlayState extends GameState {
 		textOut.update(dt);
 		
 		// Select the most recent trigger
-		if(lastScriptMarker+1 < timeMarkers.length && completionAmount > timeMarkers[lastScriptMarker+1]) {
+		if(lastScriptMarker+1 < timeMarkers.length && accumulatedTime > timeMarkers[lastScriptMarker+1]) {
 			lastScriptMarker++;
-			// Set the emotion
+			
 			// Set the text
-			textOut.setText(hostComments[lastScriptMarker], 0.5f, 10f);
-			System.out.println("Set text " + hostComments[lastScriptMarker]);
+			textOut.setText(hostComments[lastScriptMarker], 0.5f, 5f);
+			
+			// Set the emotion
+			teacherSprite = Game.assetManager.get(hostEmotions[lastScriptMarker], Texture.class);
 			//System.out.print(hostEmotions[latestTrigger] + ":" + hostComments[latestTrigger] + "\n");
 		}
 		
@@ -311,6 +322,7 @@ public class PlayState extends GameState {
 		
 		// Render teacher images
 		batch.draw(teacherImage, teacherCanvasLocation.x, teacherCanvasLocation.y);
+		batch.draw(teacherSprite, teacherSpriteLocation.x, teacherSpriteLocation.y);
 		if(showHint) {
 			batch.draw(goalImage, teacherCanvasLocation.x, teacherCanvasLocation.y);
 		}
